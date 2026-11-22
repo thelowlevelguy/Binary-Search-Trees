@@ -3,7 +3,7 @@ import { Node } from "./node.js";
 export class Tree {
     constructor(arr) {
         //init with array
-        this.root = (function (){
+        this.root = (function buildTree(){
             function uniqSorted(arr){{
                 let mockArray = []
                 let sorted = arr.sort((a,b) => a-b);
