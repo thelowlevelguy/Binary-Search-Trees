@@ -66,4 +66,58 @@ export class Tree {
         }
     }
 
+    deleteItem(value){
+        //As all node has different keys, so we can get 
+        //each node  based on the value
+        if (!this.include(value)) return
+        let parent = null;
+        let node = this.root
+        while(node !== null && node.data !== value){
+            if (node.data > value) {
+                parent = node;
+                node = node.left;
+            }else{
+                parent = node;
+                node = node.right;
+            }
+        }
+
+        function shiftNodes(root, parent, n, side){
+            if (parent === null){
+                root = side;
+            }else if (n === parent.left){
+                parent.left = side
+            }else{
+                parent.right = side
+            }
+        }
+
+        //no left node, take the right one;
+        if (node.left === null){
+            shiftNodes(this.root, parent, node, node.right);
+        //no right node, take the left one
+        }else if (node.right === null){
+            shiftNodes(this.root, parent, node, node.left);
+
+        }else{
+            //both right and left nodes exist
+            //find the sucessor(find the smallest on the greater. 
+            // So we go to the right and take the smaller on the left childs)
+            let minNode = node.right;
+            let minNodeParent = node;
+
+            while(minNode.left !== null){
+                minNodeParent = minNode;
+                minNode = minNode.left;
+            }
+            //mean that the right node has almost one left node
+            if (minNodeParent !== node){
+                shiftNodes(this.root, minNodeParent, minNode, minNode.right)
+                minNode.right = node.right;   
+            }
+
+            shiftNodes(this.root, parent, node, minNode)
+            minNode.left = node.left;
+        }
+    }
 }
