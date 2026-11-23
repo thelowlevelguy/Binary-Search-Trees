@@ -136,4 +136,48 @@ export class Tree {
         }
     }
 
+    inOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function inOrderTreeWalk(root){
+            if(root != null){
+                inOrderTreeWalk(root.left);
+                callback(root.data);
+                inOrderTreeWalk(root.right);
+            }
+        }
+        inOrderTreeWalk(root);
+    }
+
+    preOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function preOrderTreeWalk(root){
+            if(root != null){
+                callback(root.data);
+                preOrderTreeWalk(root.left);
+                preOrderTreeWalk(root.right);
+            }
+        }
+        preOrderTreeWalk(root);
+    }
+
+    postOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function postOrderTreeWalk(root){
+            if(root != null){
+                callback(root.data);
+                postOrderTreeWalk(root.left);
+                postOrderTreeWalk(root.right);
+            }
+        }
+        postOrderTreeWalk(root);
+    }
 }
