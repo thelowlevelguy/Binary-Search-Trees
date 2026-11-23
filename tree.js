@@ -120,4 +120,20 @@ export class Tree {
             minNode.left = node.left;
         }
     }
+
+    levelOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+        //Use thsis array as queue;
+        let q = [];
+        q.push(root)
+        while(q.length !== 0){
+            let v = q.shift();
+            callback(v.data);
+            if (v.left !== null) q.push(v.left);
+            if (v.right !== null) q.push(v.right);
+        }
+    }
+
 }
