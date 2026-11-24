@@ -71,60 +71,45 @@ export class Tree {
     }
 
     deleteItem(value){
-        //As all node has different keys, so we can get 
-        //each node  based on the value
-        // if (!this.include(value)) return
-        // let parent = null;
-        // let node = this.root
-        // while(node !== null && node.data !== value){
-        //     if (node.data > value) {
-        //         //save the parent node before it changes
-        //         parent = node;
-        //         node = node.left;
-        //     }else{
-        //         parent = node;
-        //         node = node.right;
-        //     }
-        // }
         let node = this.getNode(value);
         if (node.child === null) return;
 
-        function shiftNodes(root, n, side){
-            if (n.parent === null){
+        function shiftNodes(root, parent, child, side){
+            if (parent === null){
                 root = side;
-            }else if (n === n.parent.left){
-                n.parent.left = side
+            }else if (child === parent.left){
+                parent.left = side
             }else{
-                n.parent.right = side
+                parent.right = side
             }
         }
 
         //no left node, take the right one;
         if (node.child.left === null){
-            shiftNodes(this.root, node, node.child.right);
+            shiftNodes(this.root, node.parent, node.child, node.child.right);
         //no right node, take the left one
-        }else if (node.right === null){
-            shiftNodes(this.root, node, node.child.left);
-
+        }else if (node.child.right === null){
+            shiftNodes(this.root, node.parent, node.child, node.child.left);
         }else{
-            //both right and left nodes exist
-            //find the sucessor(find the smallest on the greater. 
-            // So we go to the right and take the smaller on the left childs)
-            let minNode = node.right;
-            let minNodeParent = node;
+
+            let minNode = node.child.right;
+            let minNodeParent = node.child;
 
             while(minNode.left !== null){
                 minNodeParent = minNode;
                 minNode = minNode.left;
             }
+
             //mean that the right node has almost one left node
-            if (minNodeParent !== node){
+            if (minNodeParent !== node.child){
+                //the left side is already null basing on the last while loop
+                //ss we set the parent child to the right child of the new node
                 shiftNodes(this.root, minNodeParent, minNode, minNode.right)
-                minNode.right = node.right;   
+                minNode.right = node.child.right;   
             }
 
-            shiftNodes(this.root, parent, node, minNode)
-            minNode.left = node.left;
+            shiftNodes(this.root, node.parent, node.child, minNode)
+            minNode.left = node.child.left;
         }
     }
 
