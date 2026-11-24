@@ -28,40 +28,44 @@ export class Tree {
         })();
     }
 
-    include(value){
-        let root = this.root
-        while(root !== null && root.data !== value){
-            if (root.data > value) {
-                root = root.left;
+    //return a node and its parent as object
+    getNode(value){
+        let parent = null;
+        let node = this.root
+        while(node !== null && node.data !== value){
+            parent = node;
+            if (node.data > value) {
+                node = node.left;
             }else{
-                root = root.right;
+                node = node.right;
             }
         }
-        //false it not found or root is null
-        return root !== null ?  root.data === value : false;
+        let result = {
+            parent: parent,
+            child : node
+        }
+        return result;
+    }
+
+    include(value){      
+        const node = this.getNode(value) 
+        return node.child === null ? false : true;
     }
 
     insert(value){
-        if (this.include(value)) return
-        let parent = null;
-        let root = this.root
-        while(root !== null){
-            parent = root;
-            if (root.data > value){
-                root = root.left
-            }else{
-                root = root.right;
-            }
-        }
+        let node = this.getNode(value);
+        if (node.child !== null) return;
+        //else value node didn't exist
+
         //root is null here, but is either left or right;
-        root = new Node(value);
-        if (parent === null){
-            this.root = root;
+        node.child = new Node(value);
+        if (node.parent === null){
+            this.root = node.child;
         }else{
-            if (parent.data > value){
-                parent.left = root
+            if (node.parent.data > value){
+                node.parent.left = node.child
             }else{
-                parent.right = root
+                node.parent.right = node.child
             }
         }
     }
@@ -69,35 +73,38 @@ export class Tree {
     deleteItem(value){
         //As all node has different keys, so we can get 
         //each node  based on the value
-        if (!this.include(value)) return
-        let parent = null;
-        let node = this.root
-        while(node !== null && node.data !== value){
-            if (node.data > value) {
-                parent = node;
-                node = node.left;
-            }else{
-                parent = node;
-                node = node.right;
-            }
-        }
+        // if (!this.include(value)) return
+        // let parent = null;
+        // let node = this.root
+        // while(node !== null && node.data !== value){
+        //     if (node.data > value) {
+        //         //save the parent node before it changes
+        //         parent = node;
+        //         node = node.left;
+        //     }else{
+        //         parent = node;
+        //         node = node.right;
+        //     }
+        // }
+        let node = this.getNode(value);
+        if (node.child === null) return;
 
-        function shiftNodes(root, parent, n, side){
-            if (parent === null){
+        function shiftNodes(root, n, side){
+            if (n.parent === null){
                 root = side;
-            }else if (n === parent.left){
-                parent.left = side
+            }else if (n === n.parent.left){
+                n.parent.left = side
             }else{
-                parent.right = side
+                n.parent.right = side
             }
         }
 
         //no left node, take the right one;
-        if (node.left === null){
-            shiftNodes(this.root, parent, node, node.right);
+        if (node.child.left === null){
+            shiftNodes(this.root, node, node.child.right);
         //no right node, take the left one
         }else if (node.right === null){
-            shiftNodes(this.root, parent, node, node.left);
+            shiftNodes(this.root, node, node.child.left);
 
         }else{
             //both right and left nodes exist

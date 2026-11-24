@@ -14,19 +14,19 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 
 const arr = [1, 2, 4, 3, 8, 5, 6, 7, 10, 12, 11, 24];
 const n = new Tree(arr);
-console.log(`Include(${9}): ${n.include(9)}`)
-n.insert(77)
+console.log(`Include(${8}): ${n.include(8)}`)
+n.insert(15)
 //n.deleteItem(10);
-let values = [];
-n.levelOrderForEach((val) => values.push(val * 2));
-console.log(values);
-values = [];
-n.inOrderForEach((val) => values.push(val * 2));
-console.log(values);
-values = [];
-n.preOrderForEach((val) => values.push(val * 2));
-console.log(values);
-values = [];
-n.postOrderForEach((val) => values.push(val * 2));
-console.log(values);
+// let values = [];
+// n.levelOrderForEach((val) => values.push(val * 2));
+// console.log(values);
+// values = [];
+// n.inOrderForEach((val) => values.push(val * 2));
+// console.log(values);
+// values = [];
+// n.preOrderForEach((val) => values.push(val * 2));
+// console.log(values);
+// values = [];
+// n.postOrderForEach((val) => values.push(val * 2));
+// console.log(values);
 prettyPrint(n.root);
