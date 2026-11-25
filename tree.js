@@ -172,4 +172,56 @@ export class Tree {
         }
         postOrderTreeWalk(root);
     }
+
+    height(value) {
+        let node = this.getNode(value);
+        if (node.child == null) return;
+        
+        function findHeightUtil(x) {
+            if (!x) return -1;
+            
+            // Store the maximum height of left and right subtree
+            let leftHeight = findHeightUtil(x.left);
+            let rightHeight = findHeightUtil(x.right);
+            
+            // Update height of the current node
+            let ans = Math.max(leftHeight, rightHeight) + 1;
+            return ans;
+        }
+
+        return findHeightUtil(node.child)
+    }
+
+    depth(value){
+        let node = this.getNode(value);
+        if (node.child == null) return;
+
+        function findDepth(root, x) {
+            if (!root) return -1;
+            
+            let dist = -1;
+            
+            // Check if x is the current node or
+            // if it exists in the left or right subtree
+            if (root.data === x.data ||
+                (dist = findDepth(root.left, x)) >= 0 ||
+                (dist = findDepth(root.right, x)) >= 0) {
+                return dist + 1;
+            }
+            
+            return dist;
+        }
+
+        return findDepth(this.root, node.child)
+    }
+
+    isBalanced(){
+        if (this.root != null) {
+            let hl = this.height(this.root.left.data);
+            let hr = this.height(this.root.right.data);
+    
+            let bh = hr -hl; 
+            return bh >= -1 && bh <= 1;
+        } 
+    }
 }

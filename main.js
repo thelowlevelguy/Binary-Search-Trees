@@ -12,21 +12,24 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 }
 
 
-const arr = [1, 2, 4, 3, 8, 5, 6, 7, 10, 12, 11, 24];
+const arr = [1, 2, 4, 3, 8,25,58,14, 5, 6, 7, 10, 12, 11, 24];
 const n = new Tree(arr);
 console.log(`Include(${8}): ${n.include(8)}`)
 n.insert(15)
 n.deleteItem(12);
-// let values = [];
-// n.levelOrderForEach((val) => values.push(val * 2));
-// console.log(values);
-// values = [];
-// n.inOrderForEach((val) => values.push(val * 2));
-// console.log(values);
-// values = [];
-// n.preOrderForEach((val) => values.push(val * 2));
-// console.log(values);
-// values = [];
-// n.postOrderForEach((val) => values.push(val * 2));
-// console.log(values);
+let values = [];
+n.levelOrderForEach((val) => values.push(val * 2));
+console.log(values);
+values = [];
+n.inOrderForEach((val) => values.push(val * 2));
+console.log(values);
+values = [];
+n.preOrderForEach((val) => values.push(val * 2));
+console.log(values);
+values = [];
+n.postOrderForEach((val) => values.push(val * 2));
+console.log(values);
+console.log(n.height(8))
+console.log(n.depth(8))
+console.log(n.isBalanced())
 prettyPrint(n.root);
