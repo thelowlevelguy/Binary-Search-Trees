@@ -3,33 +3,35 @@ import { Node } from "./node.js";
 export class Tree {
     constructor(arr) {
         //init with array
-        this.root = (function buildTree(){
-            function uniqSorted(arr){{
-                let mockArray = []
-                let sorted = arr.sort((a,b) => a-b);
-                sorted.forEach((value) => {
-                    if (mockArray.indexOf(value) === -1) mockArray.push(value);
-                })
-                return mockArray
-            }}
-            
-            function buildTreeRecur(mockArray, start, end){
-                if (start > end) return null;
-                let mid = Math.floor(start + (end - start) / 2)
-                let root = new Node(mockArray[mid])
+        this.root = this.#buildTree(arr);
+    }
 
-                root.left = buildTreeRecur(mockArray, start, mid-1)
-                root.right = buildTreeRecur(mockArray, mid+1, end)
+    #buildTree(arr){
+        function uniqSorted(arr){{
+            let mockArray = []
+            let sorted = arr.sort((a,b) => a-b);
+            sorted.forEach((value) => {
+                if (mockArray.indexOf(value) === -1) mockArray.push(value);
+            })
+            return mockArray
+        }}
+        
+        function buildTreeRecur(mockArray, start, end){
+            if (start > end) return null;
+            let mid = Math.floor(start + (end - start) / 2)
+            let root = new Node(mockArray[mid])
 
-                return root;
-            }
-            const mockArray = uniqSorted(arr);
-            return buildTreeRecur(mockArray, 0, mockArray.length-1);
-        })();
+            root.left = buildTreeRecur(mockArray, start, mid-1)
+            root.right = buildTreeRecur(mockArray, mid+1, end)
+
+            return root;
+        }
+        const mockArray = uniqSorted(arr);
+        return buildTreeRecur(mockArray, 0, mockArray.length-1);
     }
 
     //return a node and its parent as object
-    getNode(value){
+    #getNode(value){
         let parent = null;
         let node = this.root
         while(node !== null && node.data !== value){
@@ -48,12 +50,12 @@ export class Tree {
     }
 
     include(value){      
-        const node = this.getNode(value) 
+        const node = this.#getNode(value) 
         return node.child === null ? false : true;
     }
 
     insert(value){
-        let node = this.getNode(value);
+        let node = this.#getNode(value);
         if (node.child !== null) return;
         //else value node didn't exist
 
@@ -71,7 +73,7 @@ export class Tree {
     }
 
     deleteItem(value){
-        let node = this.getNode(value);
+        let node = this.#getNode(value);
         if (node.child === null) return;
 
         function shiftNodes(root, parent, child, side){
@@ -171,5 +173,74 @@ export class Tree {
             }
         }
         postOrderTreeWalk(root);
+    }
+
+    height(value) {
+        let node = this.#getNode(value);
+        if (node.child == null) return;
+        
+        function findHeightUtil(x) {
+            if (!x) return -1;
+            
+            // Store the maximum height of left and right subtree
+            let leftHeight = findHeightUtil(x.left);
+            let rightHeight = findHeightUtil(x.right);
+            
+            // Update height of the current node
+            let ans = Math.max(leftHeight, rightHeight) + 1;
+            return ans;
+        }
+ 
+        return findHeightUtil(node.child)
+    }
+
+    depth(value){
+        let node = this.#getNode(value);
+        if (node.child == null) return;
+
+        function findDepth(root, x) {
+            if (!root) return -1;
+            
+            let dist = -1;
+            
+            // Check if x is the current node or
+            // if it exists in the left or right subtree
+            if (root.data === x.data ||
+                (dist = findDepth(root.left, x)) >= 0 ||
+                (dist = findDepth(root.right, x)) >= 0) {
+                return dist + 1;
+            }
+            
+            return dist;
+        }
+
+        return findDepth(this.root, node.child)
+    }
+
+    isBalanced(){
+        if (!this.root) return undefined;
+        let q = [this.root];
+
+        while(q.length > 0){
+            let curr = q.shift();
+            if (curr){       
+                let hl = curr.left !== null ? this.height(curr.left.data) : -1;
+                let hr = curr.right !== null ? this.height(curr.right.data) : -1;
+               
+                let bh = hr -hl; 
+                if (bh < -1 || bh > 1){
+                    return false;
+                }
+                if (curr.left) q.push(curr.left);
+                if (curr.rigth) q.push(curr.right);
+            }
+        }
+        return true
+    }
+
+    rebalance(){
+        let arr = [];
+        this.levelOrderForEach((value) => arr.push(value));
+        this.root = this.#buildTree(arr);
     }
 }
