@@ -188,7 +188,7 @@ export class Tree {
             let ans = Math.max(leftHeight, rightHeight) + 1;
             return ans;
         }
-
+ 
         return findHeightUtil(node.child)
     }
 
@@ -216,12 +216,23 @@ export class Tree {
     }
 
     isBalanced(){
-        if (this.root != null) {
-            let hl = this.height(this.root.left.data);
-            let hr = this.height(this.root.right.data);
-    
-            let bh = hr -hl; 
-            return bh >= -1 && bh <= 1;
-        } 
+        if (!this.root) return undefined;
+        let q = [this.root];
+
+        while(q.length > 0){
+            let curr = q.shift();
+            if (curr){       
+                let hl = curr.left !== null ? this.height(curr.left.data) : -1;
+                let hr = curr.right !== null ? this.height(curr.right.data) : -1;
+               
+                let bh = hr -hl; 
+                if (bh < -1 || bh > 1){
+                    return false;
+                }
+                if (curr.left) q.push(curr.left);
+                if (curr.rigth) q.push(curr.right);
+            }
+        }
+        return true
     }
 }
