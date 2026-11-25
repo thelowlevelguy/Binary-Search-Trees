@@ -28,64 +28,56 @@ export class Tree {
         })();
     }
 
-    include(value){
-        let root = this.root
-        while(root !== null && root.data !== value){
-            if (root.data > value) {
-                root = root.left;
+    //return a node and its parent as object
+    getNode(value){
+        let parent = null;
+        let node = this.root
+        while(node !== null && node.data !== value){
+            parent = node;
+            if (node.data > value) {
+                node = node.left;
             }else{
-                root = root.right;
+                node = node.right;
             }
         }
-        //false it not found or root is null
-        return root !== null ?  root.data === value : false;
+        let result = {
+            parent: parent,
+            child : node
+        }
+        return result;
+    }
+
+    include(value){      
+        const node = this.getNode(value) 
+        return node.child === null ? false : true;
     }
 
     insert(value){
-        if (this.include(value)) return
-        let parent = null;
-        let root = this.root
-        while(root !== null){
-            parent = root;
-            if (root.data > value){
-                root = root.left
-            }else{
-                root = root.right;
-            }
-        }
+        let node = this.getNode(value);
+        if (node.child !== null) return;
+        //else value node didn't exist
+
         //root is null here, but is either left or right;
-        root = new Node(value);
-        if (parent === null){
-            this.root = root;
+        node.child = new Node(value);
+        if (node.parent === null){
+            this.root = node.child;
         }else{
-            if (parent.data > value){
-                parent.left = root
+            if (node.parent.data > value){
+                node.parent.left = node.child
             }else{
-                parent.right = root
+                node.parent.right = node.child
             }
         }
     }
 
     deleteItem(value){
-        //As all node has different keys, so we can get 
-        //each node  based on the value
-        if (!this.include(value)) return
-        let parent = null;
-        let node = this.root
-        while(node !== null && node.data !== value){
-            if (node.data > value) {
-                parent = node;
-                node = node.left;
-            }else{
-                parent = node;
-                node = node.right;
-            }
-        }
+        let node = this.getNode(value);
+        if (node.child === null) return;
 
-        function shiftNodes(root, parent, n, side){
+        function shiftNodes(root, parent, child, side){
             if (parent === null){
                 root = side;
-            }else if (n === parent.left){
+            }else if (child === parent.left){
                 parent.left = side
             }else{
                 parent.right = side
@@ -93,31 +85,31 @@ export class Tree {
         }
 
         //no left node, take the right one;
-        if (node.left === null){
-            shiftNodes(this.root, parent, node, node.right);
+        if (node.child.left === null){
+            shiftNodes(this.root, node.parent, node.child, node.child.right);
         //no right node, take the left one
-        }else if (node.right === null){
-            shiftNodes(this.root, parent, node, node.left);
-
+        }else if (node.child.right === null){
+            shiftNodes(this.root, node.parent, node.child, node.child.left);
         }else{
-            //both right and left nodes exist
-            //find the sucessor(find the smallest on the greater. 
-            // So we go to the right and take the smaller on the left childs)
-            let minNode = node.right;
-            let minNodeParent = node;
+
+            let minNode = node.child.right;
+            let minNodeParent = node.child;
 
             while(minNode.left !== null){
                 minNodeParent = minNode;
                 minNode = minNode.left;
             }
+
             //mean that the right node has almost one left node
-            if (minNodeParent !== node){
+            if (minNodeParent !== node.child){
+                //the left side is already null basing on the last while loop
+                //ss we set the parent child to the right child of the new node
                 shiftNodes(this.root, minNodeParent, minNode, minNode.right)
-                minNode.right = node.right;   
+                minNode.right = node.child.right;   
             }
 
-            shiftNodes(this.root, parent, node, minNode)
-            minNode.left = node.left;
+            shiftNodes(this.root, node.parent, node.child, minNode)
+            minNode.left = node.child.left;
         }
     }
 
@@ -136,4 +128,48 @@ export class Tree {
         }
     }
 
+    inOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function inOrderTreeWalk(root){
+            if(root != null){
+                inOrderTreeWalk(root.left);
+                callback(root.data);
+                inOrderTreeWalk(root.right);
+            }
+        }
+        inOrderTreeWalk(root);
+    }
+
+    preOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function preOrderTreeWalk(root){
+            if(root != null){
+                callback(root.data);
+                preOrderTreeWalk(root.left);
+                preOrderTreeWalk(root.right);
+            }
+        }
+        preOrderTreeWalk(root);
+    }
+
+    postOrderForEach(callback){
+        if (callback == null) throw new Error("no callback provided");
+        if (this.root == null) return;
+        let root = this.root;
+
+        function postOrderTreeWalk(root){
+            if(root != null){
+                callback(root.data);
+                postOrderTreeWalk(root.left);
+                postOrderTreeWalk(root.right);
+            }
+        }
+        postOrderTreeWalk(root);
+    }
 }
