@@ -11,25 +11,56 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
   prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
 }
 
+const randomNumber = (min, max) => {
+  let mn = Math.floor(Math.random() * min);
+  let mx = Math.floor(Math.random() * max);
+  return Math.max(mn, mx);
+} 
 
-const arr = [1, 2, 4, 3, 8,25,58,14, 5, 6, 7, 10, 12, 11, 24];
+
+let arr = [];
+for (let i = 0; i < 16; i++){
+  let r = randomNumber(0, 100);
+  arr.push(r);
+}
+
 const n = new Tree(arr);
-console.log(`Include(${8}): ${n.include(8)}`)
-n.insert(15)
-n.deleteItem(12);
+console.log(n.isBalanced());
+
 let values = [];
-n.levelOrderForEach((val) => values.push(val * 2));
-console.log(values);
+n.levelOrderForEach((val) => values.push(val));
+console.log("Level Order Traversal: ",values);
 values = [];
-n.inOrderForEach((val) => values.push(val * 2));
-console.log(values);
+n.inOrderForEach((val) => values.push(val));
+console.log("In Order Traversal: ",values);
 values = [];
-n.preOrderForEach((val) => values.push(val * 2));
-console.log(values);
+n.preOrderForEach((val) => values.push(val));
+console.log("Pre oder Traversal: ",values);
 values = [];
-n.postOrderForEach((val) => values.push(val * 2));
-console.log(values);
-console.log(n.height(8))
-console.log(n.depth(8))
-console.log(n.isBalanced())
+n.postOrderForEach((val) => values.push(val));
+console.log("Post Order Traversal: ",values);
+
+for (let i = 0; i < 10; i++){
+  let r = randomNumber(100, 200);
+  n.insert(r);
+}
+
+console.log("Is Balanced: ",n.isBalanced())
 prettyPrint(n.root);
+
+n.rebalance()
+console.log("Is Balanced: ",n.isBalanced())
+prettyPrint(n.root);
+
+values = [];
+n.levelOrderForEach((val) => values.push(val));
+console.log("Level Order Traversal: ",values);
+values = [];
+n.inOrderForEach((val) => values.push(val));
+console.log("In Order Traversal: ",values);
+values = [];
+n.preOrderForEach((val) => values.push(val));
+console.log("Pre oder Traversal: ",values);
+values = [];
+n.postOrderForEach((val) => values.push(val));
+console.log("Post Order Traversal: ",values);

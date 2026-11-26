@@ -167,9 +167,9 @@ export class Tree {
 
         function postOrderTreeWalk(root){
             if(root != null){
-                callback(root.data);
                 postOrderTreeWalk(root.left);
                 postOrderTreeWalk(root.right);
+                callback(root.data);
             }
         }
         postOrderTreeWalk(root);
@@ -190,8 +190,7 @@ export class Tree {
             let ans = Math.max(leftHeight, rightHeight) + 1;
             return ans;
         }
- 
-        return findHeightUtil(node.child)
+        return findHeightUtil(node.child);
     }
 
     depth(value){
@@ -217,6 +216,7 @@ export class Tree {
         return findDepth(this.root, node.child)
     }
 
+    //Traverse node by level and check the balance factor of each node
     isBalanced(){
         if (!this.root) return undefined;
         let q = [this.root];
@@ -227,6 +227,7 @@ export class Tree {
                 let hl = curr.left !== null ? this.height(curr.left.data) : -1;
                 let hr = curr.right !== null ? this.height(curr.right.data) : -1;
                
+                //So when the BF of one node is "incorrect" then tree is not balanced
                 let bh = hr -hl; 
                 if (bh < -1 || bh > 1){
                     return false;
@@ -240,7 +241,7 @@ export class Tree {
 
     rebalance(){
         let arr = [];
-        this.levelOrderForEach((value) => arr.push(value));
+        this.inOrderForEach((value) => arr.push(value));
         this.root = this.#buildTree(arr);
     }
 }
